@@ -34,6 +34,7 @@ Build system : Maven
 <details>
     <summary>docker-compose_mongodb.yml</summary>
 
+```yml
 version: '3.7'
 
 x-mongo-common: &mongo-common
@@ -59,5 +60,7 @@ services:
 
 volumes:
   mongodb:
+```
 
 </details>
+
