@@ -64,3 +64,7 @@ volumes:
 
 </details>
 
+
+## References
+
+- [File upload spring boot | Medium](https://medium.com/nerd-for-tech/file-upload-with-springboot-and-mongodb-76a8f5b9f75d)
