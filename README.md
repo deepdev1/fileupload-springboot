@@ -48,9 +48,9 @@ Microservice for multi-part file upload with MongoDB's GridFS as file store.
 
 
 
-- The file storage is MongoDB's [GridFS](https://www.mongodb.com/docs/manual/core/gridfs/)
+## Caveats
+
 - GridFS (and the microservice's) file size limit is `15MB`
-- The uploaded file metadata is stored in the collection `files`
 
 ## MongoDB Installation
 
