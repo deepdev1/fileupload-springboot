@@ -2,9 +2,9 @@
 
 ## APIs
 
-1. `/api/upload`        : Upload file [POST]
-2. `/api/download/{id}` : Download file of a given id [GET]
-3. `/api/files`         : Get a list of uploaded files [GET]
+1. [POST] `/api/upload`        : Upload file
+2. [GET]  `/api/download/{id}` : Download file of a given id 
+3. [GET]  `/api/files`         : Get a list of uploaded files 
 
 Import the postman collection's raw text below:
 <details>
