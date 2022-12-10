@@ -1,14 +1,21 @@
 # File Upload Microservice - Spring Boot + MongoDB
 
-## APIs
+Microservice for multi-part file upload with MongoDB's GridFS as file store.
 
-1. [POST] `/api/upload`        : Upload file
-2. [GET]  `/api/download/{id}` : Download file of a given id 
-3. [GET]  `/api/files`         : Get a list of uploaded files 
+## REST API
 
-Import the postman collection's raw text below:
+```markdown
++---------------------+--------------+---------------------+----------------+------------------------------------------------------+
+| URI                 | HTTP Method  | Resource Operation  | Response Code  | Description                                          |
++=====================+==============+=====================+================+======================================================+
+| /api/upload         | POST         | Create              | 201            | Upload file as multipart content                     |
+| /api/download/{id}  | GET          | Fetch               | 200            | Download the file as content disposition attachment  |
+| /api/files          | GET          | Fetch               | 200            | Get a list of uploaded files                         |
++---------------------+--------------+---------------------+----------------+------------------------------------------------------+
+```
+
 <details>
-    <summary>Open API 3.0 Schema</summary>
+    <summary>Open doc API definitions (import as postman collection)</summary>
 
 ```json
 {"openapi":"3.0.1","info":{"title":"OpenAPI definition","version":"v0"},"servers":[{"url":"http://localhost:8080","description":"Generated server url"}],"paths":{"/api/upload":{"post":{"tags":["fileupload-application"],"operationId":"uploadFile","requestBody":{"content":{"multipart/form-data":{"schema":{"required":["file"],"type":"object","properties":{"file":{"type":"string","format":"binary"}}}}}},"responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/api/healthcheck":{"get":{"tags":["fileupload-application"],"operationId":"echoHealth","responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/api/files":{"get":{"tags":["fileupload-application"],"operationId":"getFiles","responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"type":"object"}}}}}}},"/api/download/{id}":{"get":{"tags":["fileupload-application"],"operationId":"downloadFile","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"string","format":"binary"}}}}}}}},"components":{}}
@@ -18,21 +25,37 @@ Import the postman collection's raw text below:
 
 
 
-## Technologies used
+## Implementation Details
 
-```text
-Framework    : Spring Boot 2.7.5 + Java 11
-Web layer    : Spring MVC
-Data layer   : Spring Data Mongo
-Build system : Maven
-```
+1. Upload
+   
+   - `org.springframework.web.multipart.MultipartFile` - file
+   - `org.springframework.data.mongodb.gridfs.GridFsTemplate` - MongoDB GridFS operations
+     - ```
+       public org.bson.types.ObjectId store( java.io.InputStream content,
+                                             @Nullable String filename,
+                                             @Nullable String contentType,
+                                             @Nullable Object metadata )
+       ```
+       
+2. Download
+   
+   - ```
+     public com.mongodb.client.gridfs.model.GridFSFile findOne( org.springframework.data.mongodb.core.query.Query query )
+     ``` 
+   - Response header: `header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + <filename> + "\"")`
+   - Response body: `ByteArrayResource(filecontent)`
+
+
 
 - The file storage is MongoDB's [GridFS](https://www.mongodb.com/docs/manual/core/gridfs/)
 - GridFS (and the microservice's) file size limit is `15MB`
 - The uploaded file metadata is stored in the collection `files`
 
+## MongoDB Installation
+
 <details>
-    <summary>docker-compose_mongodb.yml</summary>
+    <summary>docker-compose.yml</summary>
 
 ```yml
 version: '3.7'
@@ -63,6 +86,8 @@ volumes:
 ```
 
 </details>
+
+`docker-compose up -d`
 
 
 ## References
